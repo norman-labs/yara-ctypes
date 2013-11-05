@@ -23,47 +23,10 @@ def load_version(filename='yara/version.py'):
         version = match.group(1)
         return version
 
-
-#build the yara package data (shipped yar files)
-yara_package_data = []
-for path, _, files in os.walk(os.path.join('yara', 'rules')):
-    rootpath = path[len('yara') + 1:]
-    for f in files:
-        if f.endswith('.yar'):
-            yara_package_data.append(os.path.join(rootpath, f))
-
-
-#see if we have a pre-built libyara for this platform
-arch, exetype = platform.architecture()
-system = platform.system().lower()
-machine = platform.machine().lower()
-
-if machine in ['i686', 'x86']:
-    machine = 'x86_32'
-
-if machine in ['amd64']:
-    machine = 'x86_64'
-
-if system == 'windows':
-    ext = '.dll'
-else:
-    ext = '.so'
-
-libyara_path = os.path.join('.', 'libs', system, machine, "libyara" + ext)
-data_files = []
-if os.path.exists(libyara_path):
-    if system == 'windows':
-        install_libdir = os.path.join(sys.prefix, 'DLLs')
-    else:
-        install_libdir = os.path.join(sys.prefix, 'lib')
-    data_files.append((install_libdir, [libyara_path]))
-
 setup(
     name="yara",
     version=load_version(),
     packages=['yara'],
-    package_data=dict(yara=yara_package_data),
-    data_files=data_files,
     zip_safe=False,
     author="Michael Dorman",
     author_email="mjdorma@gmail.com",
@@ -96,10 +59,5 @@ setup(
     ],
     test_suite="tests"
 )
-
-if not data_files:
-    print("\nWARNING: Could not find %s" % libyara_path)
-    print("You need to 'make install' libyara for this system/machine")
-    print("See http://pythonhosted.org/yara/ for help")
 
 
