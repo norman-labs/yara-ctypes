@@ -12,6 +12,7 @@ if 'test' in sys.argv:
     import atexit
     atexit.register = lambda be_gone_nasty_traceback: True
 
+
 def load_version(filename='yara/version.py'):
     """Parse a __version__ number from a source file"""
     with open(filename) as source:
@@ -23,10 +24,16 @@ def load_version(filename='yara/version.py'):
         version = match.group(1)
         return version
 
+data_files = []
+if (platform.machine() == 'x86_64' and
+    platform.system() == 'Linux'):
+    data_files.append(('lib', ['libs/linux/x86_64/libyara.so']))
+
 setup(
     name="yara",
     version=load_version(),
     packages=['yara'],
+    data_files=data_files,
     zip_safe=False,
     author="Michael Dorman",
     author_email="mjdorma@gmail.com",
@@ -34,7 +41,7 @@ setup(
     description="Compile YARA rules to test against files or strings",
     long_description=open('README.rst').read(),
     license="Apache Software Licence",
-    install_requires = [],
+    install_requires=[],
     entry_points={
         'console_scripts': [
             'yara-ctypes = yara.cli:entry'
