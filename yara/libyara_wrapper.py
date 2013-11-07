@@ -301,16 +301,19 @@ YARA_CONTEXT._fields_ = [
             ]
 
 
+tmp = os.environ['PATH']
+
 #Import libyara
 if sys.platform == 'win32':
     dllpath = os.path.join(sys.prefix, 'DLLs')
     library = os.path.join(dllpath, 'libyara.dll')
+    os.environ['PATH'] += ";%s" % dllpath
 else:
-    dllpath = os.path.join(sys.prefix, 'lib')
-    library = os.path.join(dllpath, 'libyara.so')
+    #dllpath = os.path.join(sys.prefix, 'lib')
+    #library = os.path.join(dllpath, 'libyara.so')
+    library = 'libyara.so.0'
 
-tmp = os.environ['PATH']
-os.environ['PATH'] += ";%s" % dllpath
+
 try:
     libyaradll = cdll.LoadLibrary(library)
 except Exception as err:
