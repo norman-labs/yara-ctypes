@@ -25,9 +25,12 @@ def load_version(filename='yara/version.py'):
         return version
 
 data_files = []
-if (platform.machine() == 'x86_64' and
-    platform.system() == 'Linux'):
-    data_files.append(('lib', ['libs/linux/x86_64/libyara.so']))
+libpath = os.path.join(
+    'libs', platform.system().lower(), platform.machine().lower(),
+    'libyara.so'
+)
+if os.path.exists(libpath):
+    data_files.append(('lib', [libpath]))
 
 setup(
     name="yara",
